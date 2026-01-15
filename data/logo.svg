@@ -1,0 +1,44 @@
+<svg width="300" height="300" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+  <!-- 底层渐变圆形：增加层次感，替代单调纯色 -->
+  <defs>
+    <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F8F4EA" />
+      <stop offset="100%" stop-color="#E8DFD0" />
+    </linearGradient>
+    <!-- 文字描边渐变（增强质感） -->
+    <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7A3E18" />
+      <stop offset="100%" stop-color="#9C5A27" />
+    </linearGradient>
+  </defs>
+
+  <!-- 主圆形外框：圆角+渐变，更精致 -->
+  <circle cx="150" cy="150" r="145" fill="url(#logoGradient)" stroke="#8B4513" stroke-width="2" stroke-linecap="round"/>
+  <!-- 内层装饰环：增加细节，提升精致度 -->
+  <circle cx="150" cy="150" r="138" fill="none" stroke="#8B4513" stroke-width="1" stroke-dasharray="8,4" opacity="0.5"/>
+
+  <!-- 核心文字：黑客松（适配博客Logo的字体/排版） -->
+  <text x="150" y="145" 
+        font-family="Ma Shan Zheng, SimHei, Microsoft YaHei, Arial" 
+        font-size="52" 
+        fill="url(#textGradient)" 
+        text-anchor="middle" 
+        font-weight="500"
+        letter-spacing="2">黑客松</text>
+  
+  <!-- 点缀元素：简约代码图标（呼应主题，不抢视觉焦点） -->
+  <g stroke="#8B4513" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.7" transform="scale(0.35) translate(220, 300)">
+    <rect x="100" y="100" width="100" height="80" rx="5"/>
+    <line x1="120" y1="130" x2="180" y2="130"/>
+    <line x1="120" y1="150" x2="160" y2="150"/>
+    <line x1="120" y1="170" x2="170" y2="170"/>
+  </g>
+
+  <!-- 底部小字（可选：博客Slogan/署名） -->
+  <text x="150" y="220" 
+        font-family="Arial, SimSun" 
+        font-size="14" 
+        fill="#8B4513" 
+        text-anchor="middle" 
+        opacity="0.8">技术创新 · 突破边界</text>
+</svg>

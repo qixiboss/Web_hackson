@@ -1,0 +1,36 @@
+<svg width="700" height="700" viewBox="0 0 700 700" xmlns="http://www.w3.org/2000/svg">
+  <!-- 底层渐变圆形：增加层次感 -->
+  <defs>
+    <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F8F4EA" />
+      <stop offset="100%" stop-color="#E8DFD0" />
+    </linearGradient>
+    <!-- 文字描边渐变 -->
+    <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7A3E18" />
+      <stop offset="100%" stop-color="#9C5A27" />
+    </linearGradient>
+  </defs>
+
+  <!-- 主圆形外框 -->
+  <circle cx="350" cy="350" r="330" fill="url(#logoGradient)" stroke="#8B4513" stroke-width="4" stroke-linecap="round"/>
+  <!-- 内层装饰环 -->
+  <circle cx="350" cy="350" r="315" fill="none" stroke="#8B4513" stroke-width="2" stroke-dasharray="15,10" opacity="0.5"/>
+
+  <!-- 核心文字：黑客松 -->
+  <text x="350" y="360" 
+        font-family="Ma Shan Zheng, SimHei, Microsoft YaHei, Arial" 
+        font-size="110" 
+        fill="url(#textGradient)" 
+        text-anchor="middle" 
+        font-weight="500"
+        letter-spacing="4">黑客松</text>
+  
+  <!-- 点缀元素：简约代码图标 -->
+  <g stroke="#8B4513" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.7" transform="scale(0.7) translate(150, 200)">
+    <rect x="200" y="200" width="200" height="160" rx="10"/>
+    <line x1="240" y1="260" x2="360" y2="260"/>
+    <line x1="240" y1="300" x2="320" y2="300"/>
+    <line x1="240" y1="340" x2="340" y2="340"/>
+  </g>
+</svg>
