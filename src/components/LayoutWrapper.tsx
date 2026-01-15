@@ -19,12 +19,12 @@ const LayoutWrapper = ({ children }: Props) => {
         <header className="flex items-center justify-between py-10">
           <div>
             <Link href="/" aria-label={siteMetadata.headerTitle}>
-              <div className="flex items-center justify-between">
-                <div className="mr-3 h-12">
-                  <Logo />
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 flex-shrink-0">
+                  <Logo style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 </div>
                 {typeof siteMetadata.headerTitle === 'string' ? (
-                  <div className="hidden h-6 text-2xl font-semibold sm:block">
+                  <div className="hidden text-xl font-semibold sm:block">
                     {siteMetadata.headerTitle}
                   </div>
                 ) : (
