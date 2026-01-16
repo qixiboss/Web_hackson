@@ -6,7 +6,7 @@
     "start": "cross-env SOCKET=true node ./scripts/next-remote-watch.js ./data",
     "dev": "next dev",
     "build": "next build && node ./scripts/generate-sitemap",
-    "serve": "next start",
+    "serve": "next start -p 31080",
     "analyze": "cross-env ANALYZE=true next build",
     "lint": "next lint --fix --dir src --dir scripts",
     "prepare": "husky install"

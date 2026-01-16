@@ -8,6 +8,7 @@ import Tag from '@/components/Tag'
 import siteMetadata from '@/data/siteMetadata'
 import Comments from '@/components/comments'
 import ScrollTopAndComment from '@/components/ScrollTopAndComment'
+import ShareButtons from '@/components/ShareButtons'
 import ProgressBar from '@/components/ProgressBar'
 import TOCInline from '@/components/TOCInline'
 import { ReactNode } from 'react'
@@ -109,6 +110,8 @@ export default function PostLayout(props: Props) {
               <div className="prose max-w-none break-words pt-10 pb-8 dark:prose-dark">
                 {children}
               </div>
+
+              <ShareButtons title={title} slug={slug} />
 
               <Comments frontMatter={frontMatter} />
             </div>
