@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Link from '@/components/Link'
 import Tag from '@/components/Tag'
 import formatDate from '@/lib/utils/formatDate'
@@ -8,30 +8,58 @@ import { PostFrontMatter } from 'types/PostFrontMatter'
 export default function Article({ slug, date, title, summary, tags, images }: PostFrontMatter) {
   const src = Array.isArray(images) ? images[0] : images
   const [showShare, setShowShare] = useState(false)
+  const [copied, setCopied] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
+  
+  // 检测设备类型
+  useEffect(() => {
+    const checkMobile = () => {
+      // 检测是否为移动端设备
+      const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
+      setIsMobile(mobileRegex.test(navigator.userAgent))
+    }
+    
+    checkMobile()
+    // 监听窗口大小变化，处理设备旋转等情况
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
   
   // 文章链接
   const url = typeof window !== 'undefined' ? `${window.location.origin}/blog/${slug}` : `https://example.com/blog/${slug}`
   
   // 分享链接配置
   const shareLinks = {
-    xiaohongshu: `https://www.xiaohongshu.com/explore`,
-    weibo: `https://service.weibo.com/share/share.php?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`,
-    wechat: url,
+    // 小红书分享 - 移动端使用应用协议，桌面端使用网页链接
+    xiaohongshu: isMobile 
+      ? `xiaohongshu://share?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}` 
+      : `https://www.xiaohongshu.com/explore`,
+    // 微博分享 - 移动端使用应用协议，桌面端使用网页链接
+    weibo: isMobile 
+      ? `sinaweibo://share?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}` 
+      : `https://service.weibo.com/share/share.php?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`,
+    // 微信分享 - 移动端使用应用协议，桌面端显示二维码
+    wechat: isMobile 
+      ? `weixin://share?url=${encodeURIComponent(url)}` 
+      : url,
   }
   
   const copyToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(url)
-      alert('链接已复制到剪贴板！')
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
     } catch (err) {
       console.error('Failed to copy:', err)
+      // 降级方案：创建临时输入框复制
       const tempInput = document.createElement('input')
       tempInput.value = url
       document.body.appendChild(tempInput)
       tempInput.select()
       document.execCommand('copy')
       document.body.removeChild(tempInput)
-      alert('链接已复制到剪贴板！')
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
     }
   }
   
@@ -87,8 +115,8 @@ export default function Article({ slug, date, title, summary, tags, images }: Po
                         {/* 小红书分享 */}
                         <a
                           href={shareLinks.xiaohongshu}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                          target={isMobile ? '_self' : '_blank'}
+                          rel={isMobile ? '' : 'noopener noreferrer'}
                           className="flex flex-col items-center justify-center transition-all duration-200 hover:scale-110 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
                           aria-label="分享到小红书"
                           onClick={() => setShowShare(false)}
@@ -103,8 +131,8 @@ export default function Article({ slug, date, title, summary, tags, images }: Po
                         {/* 微博分享 */}
                         <a
                           href={shareLinks.weibo}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                          target={isMobile ? '_self' : '_blank'}
+                          rel={isMobile ? '' : 'noopener noreferrer'}
                           className="flex flex-col items-center justify-center transition-all duration-200 hover:scale-110 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
                           aria-label="分享到微博"
                           onClick={() => setShowShare(false)}
@@ -116,31 +144,47 @@ export default function Article({ slug, date, title, summary, tags, images }: Po
                           />
                         </a>
                         
-                        {/* 微信分享 */}
-                        <div className="relative group">
-                          <button
+                        {/* 微信分享 - 移动端直接跳转，桌面端显示二维码 */}
+                        {isMobile ? (
+                          <a
+                            href={shareLinks.wechat}
+                            target="_self"
                             className="flex flex-col items-center justify-center transition-all duration-200 hover:scale-110 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
                             aria-label="分享到微信"
+                            onClick={() => setShowShare(false)}
                           >
                             <img
                               src="/static/images/wechat.svg"
                               alt="微信"
                               className="h-6 w-6 object-contain"
                             />
-                          </button>
-                          {/* 微信二维码 */}
-                          <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
-                            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-3 border border-gray-200 dark:border-gray-700 min-w-[180px]">
-                              <img 
-                                src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&margin=0&data=${encodeURIComponent(url)}`} 
-                                alt="微信分享二维码" 
-                                className="w-full h-auto object-cover rounded mx-auto"
-                                style={{ width: '150px', height: '150px', display: 'block' }}
+                          </a>
+                        ) : (
+                          <div className="relative group">
+                            <button
+                              className="flex flex-col items-center justify-center transition-all duration-200 hover:scale-110 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+                              aria-label="分享到微信"
+                            >
+                              <img
+                                src="/static/images/wechat.svg"
+                                alt="微信"
+                                className="h-6 w-6 object-contain"
                               />
-                              <p className="text-xs text-center mt-2 text-gray-500 dark:text-gray-400">扫码分享到微信</p>
+                            </button>
+                            {/* 微信二维码 */}
+                            <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-3 border border-gray-200 dark:border-gray-700 min-w-[180px]">
+                                <img 
+                                  src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&margin=0&data=${encodeURIComponent(url)}`} 
+                                  alt="微信分享二维码" 
+                                  className="w-full h-auto object-cover rounded mx-auto"
+                                  style={{ width: '150px', height: '150px', display: 'block' }}
+                                />
+                                <p className="text-xs text-center mt-2 text-gray-500 dark:text-gray-400">扫码分享到微信</p>
+                              </div>
                             </div>
                           </div>
-                        </div>
+                        )}
                         
                         {/* 复制链接 */}
                         <button
@@ -156,6 +200,18 @@ export default function Article({ slug, date, title, summary, tags, images }: Po
                           </svg>
                         </button>
                       </div>
+                    </div>
+                  )}
+                  
+                  {/* 复制成功提示 */}
+                  {copied && (
+                    <div className="absolute right-0 mt-12 flex items-center justify-center">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 shadow-md">
+                        <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        链接已复制到剪贴板！
+                      </span>
                     </div>
                   )}
                 </div>
